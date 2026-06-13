@@ -168,7 +168,7 @@ docker compose up --build
 - 使用 Redis 实现分布式限流、租户配额和并发控制
 - 引入熔断器、供应商健康评分和动态路由
 - 记录 Token 用量、调用成本和租户账单
-- 使用 PostgreSQL 管理租户、密钥、供应商和审计记录
+- 使用 MySQL 管理租户、密钥、供应商和审计记录
 - 支持敏感信息脱敏、语义缓存和管理控制台
 - 接入 OpenTelemetry，并补充 Kubernetes 部署清单
 
