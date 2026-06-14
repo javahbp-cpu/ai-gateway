@@ -20,7 +20,7 @@ public class ModelRouter {
         List<String> providers = properties.getRoutes().get(model);
         if (providers == null || providers.isEmpty()) {
             throw new GatewayException(HttpStatus.BAD_REQUEST, "model_not_found",
-                    "No provider route is configured for model: " + model);
+                    "未找到模型对应的供应商路由：" + model);
         }
         return providers;
     }

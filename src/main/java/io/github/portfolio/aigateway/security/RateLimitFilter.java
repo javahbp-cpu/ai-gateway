@@ -60,7 +60,7 @@ public class RateLimitFilter implements WebFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        byte[] body = "{\"error\":{\"code\":\"rate_limit_exceeded\",\"message\":\"Request rate limit exceeded\",\"type\":\"rate_limit_error\"}}"
+        byte[] body = "{\"error\":{\"code\":\"rate_limit_exceeded\",\"message\":\"请求频率超过限制\",\"type\":\"rate_limit_error\"}}"
                 .getBytes(StandardCharsets.UTF_8);
         exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);

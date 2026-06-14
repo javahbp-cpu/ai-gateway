@@ -26,7 +26,8 @@ class AiGatewayApplicationTest {
                 .expectStatus().isUnauthorized()
                 .expectHeader().exists("x-request-id")
                 .expectBody()
-                .jsonPath("$.error.code").isEqualTo("invalid_api_key");
+                .jsonPath("$.error.code").isEqualTo("invalid_api_key")
+                .jsonPath("$.error.message").isEqualTo("API Key 无效");
     }
 
     @Test
@@ -50,5 +51,47 @@ class AiGatewayApplicationTest {
                 .jsonPath("$.object").isEqualTo("list")
                 .jsonPath("$.data[0].id").isEqualTo("smart-chat")
                 .jsonPath("$.data[0].owned_by").isEqualTo("ai-gateway");
+    }
+
+    @Test
+    void returnsChineseMessageForMalformedJson() {
+        webTestClient.post()
+                .uri("/v1/chat/completions")
+                .header("Authorization", "Bearer gateway-dev-key")
+                .header("Content-Type", "application/json")
+                .bodyValue("{invalid-json")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.error.code").isEqualTo("invalid_request")
+                .jsonPath("$.error.message").isEqualTo("请求参数格式错误");
+    }
+
+    @Test
+    void returnsChineseMessageWhenModelIsMissing() {
+        webTestClient.post()
+                .uri("/v1/chat/completions")
+                .header("Authorization", "Bearer gateway-dev-key")
+                .header("Content-Type", "application/json")
+                .bodyValue("{\"messages\":[]}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.error.code").isEqualTo("model_required")
+                .jsonPath("$.error.message").isEqualTo("请求字段 'model' 不能为空");
+    }
+
+    @Test
+    void returnsChineseMessageWhenModelRouteDoesNotExist() {
+        webTestClient.post()
+                .uri("/v1/chat/completions")
+                .header("Authorization", "Bearer gateway-dev-key")
+                .header("Content-Type", "application/json")
+                .bodyValue("{\"model\":\"unknown-model\",\"messages\":[]}")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.error.code").isEqualTo("model_not_found")
+                .jsonPath("$.error.message").isEqualTo("未找到模型对应的供应商路由：unknown-model");
     }
 }

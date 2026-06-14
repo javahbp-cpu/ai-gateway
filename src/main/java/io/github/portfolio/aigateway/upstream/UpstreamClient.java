@@ -35,11 +35,11 @@ public class UpstreamClient {
         GatewayProperties.Provider provider = properties.getProviders().get(providerName);
         if (provider == null) {
             return Mono.error(new GatewayException(HttpStatus.BAD_GATEWAY, "provider_not_found",
-                    "Provider is not configured: " + providerName));
+                    "未配置模型供应商：" + providerName));
         }
         if (provider.getApiKey() == null || provider.getApiKey().isBlank()) {
             return Mono.error(new GatewayException(HttpStatus.BAD_GATEWAY, "provider_key_missing",
-                    "API key is missing for provider: " + providerName));
+                    "模型供应商缺少 API Key：" + providerName));
         }
 
         JsonNode upstreamRequest = rewriteModel(originalRequest, provider);

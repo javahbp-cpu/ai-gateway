@@ -39,7 +39,7 @@ public class ApiKeyFilter implements WebFilter, Ordered {
                 : exchange.getRequest().getHeaders().getFirst("x-api-key");
 
         if (apiKey == null || !matchesAny(apiKey, properties.getApiKeys())) {
-            byte[] body = "{\"error\":{\"code\":\"invalid_api_key\",\"message\":\"Invalid API key\",\"type\":\"authentication_error\"}}"
+            byte[] body = "{\"error\":{\"code\":\"invalid_api_key\",\"message\":\"API Key 无效\",\"type\":\"authentication_error\"}}"
                     .getBytes(StandardCharsets.UTF_8);
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);

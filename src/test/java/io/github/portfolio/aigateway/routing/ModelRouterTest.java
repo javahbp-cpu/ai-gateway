@@ -26,6 +26,6 @@ class ModelRouterTest {
 
         assertThatThrownBy(() -> router.providersFor("missing"))
                 .isInstanceOf(GatewayException.class)
-                .hasMessageContaining("No provider route");
+                .hasMessageContaining("未找到模型对应的供应商路由");
     }
 }
