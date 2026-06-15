@@ -1,5 +1,9 @@
 package io.github.portfolio.aigateway;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import io.github.portfolio.aigateway.config.GatewayProperties;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,8 +17,22 @@ class AiGatewayApplicationTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    @Autowired
+    private GatewayProperties gatewayProperties;
+
     @Test
     void contextLoads() {
+    }
+
+    @Test
+    void configuresDeepSeekAsFirstProviderForSmartChat() {
+        GatewayProperties.Provider deepSeek = gatewayProperties.getProviders().get("deepseek");
+
+        assertThat(deepSeek).isNotNull();
+        assertThat(deepSeek.getBaseUrl()).isEqualTo("https://api.deepseek.com");
+        assertThat(deepSeek.getModelMapping().get("smart-chat")).isEqualTo("deepseek-v4-flash");
+        assertThat(gatewayProperties.getRoutes().get("smart-chat"))
+                .containsExactlyElementsOf(List.of("deepseek", "openai", "compatible"));
     }
 
     @Test

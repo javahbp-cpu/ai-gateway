@@ -14,10 +14,10 @@ class ModelRouterTest {
     @Test
     void returnsProvidersInConfiguredFallbackOrder() {
         GatewayProperties properties = new GatewayProperties();
-        properties.setRoutes(Map.of("smart-chat", List.of("primary", "fallback")));
+        properties.setRoutes(Map.of("smart-chat", List.of("deepseek", "openai", "compatible")));
 
         assertThat(new ModelRouter(properties).providersFor("smart-chat"))
-                .containsExactly("primary", "fallback");
+                .containsExactly("deepseek", "openai", "compatible");
     }
 
     @Test

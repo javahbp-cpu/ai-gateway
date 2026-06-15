@@ -26,6 +26,11 @@ gateway:
   requests-per-minute: ${GATEWAY_REQUESTS_PER_MINUTE:60}
   upstream-timeout: ${GATEWAY_UPSTREAM_TIMEOUT:60s}
   providers:
+    deepseek:
+      base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+      api-key: ${DEEPSEEK_API_KEY:}
+      model-mapping:
+        smart-chat: ${DEEPSEEK_MODEL:deepseek-v4-flash}
     openai:
       base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}
       api-key: ${OPENAI_API_KEY:}
@@ -38,6 +43,7 @@ gateway:
         smart-chat: ${COMPATIBLE_MODEL:qwen2.5:7b}
   routes:
     smart-chat:
+      - deepseek
       - openai
       - compatible
 

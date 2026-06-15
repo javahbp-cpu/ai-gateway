@@ -1,7 +1,7 @@
 # AI Gateway
 
 一个基于 Java 17 与 Spring WebFlux 构建的企业级 AI 网关。它向客户端提供统一的
-OpenAI-compatible API，并在多个大模型供应商之间完成模型映射、故障回退、鉴权、限流和可观测性治理。
+OpenAI-compatible API，并在 DeepSeek、OpenAI、本地兼容服务等多个大模型供应商之间完成模型映射、故障回退、鉴权、限流和可观测性治理。
 
 本项目不仅演示“调用大模型”，更关注网关在真实生产环境中需要解决的稳定性、扩展性和治理问题。
 
@@ -33,9 +33,9 @@ ModelRouter（逻辑模型 -> 按优先级排列的供应商）
   v
 UpstreamClient（模型改写、流式转发、指标记录）
   |
-  +--> 主供应商
+  +--> DeepSeek
   |
-  +--> 备用供应商
+  +--> OpenAI / 本地兼容服务
 ```
 
 客户端只需要请求稳定的逻辑模型，例如 `smart-chat`。网关会将它映射为不同供应商的真实模型，
@@ -56,7 +56,7 @@ Copy-Item .env.example .env
 .\mvnw.cmd spring-boot:run
 ```
 
-默认情况下，网关会先尝试 OpenAI，再尝试位于 `http://localhost:11434/v1` 的
+默认情况下，网关会先尝试 DeepSeek，再尝试 OpenAI，最后尝试位于 `http://localhost:11434/v1` 的
 OpenAI-compatible 服务。你可以在 `.env` 中配置真实的供应商地址和密钥。
 
 ### 查询可用模型
@@ -92,14 +92,20 @@ Invoke-RestMethod `
 | `GATEWAY_API_KEYS` | 客户端可使用的 API Key，多个值使用逗号分隔 | `gateway-dev-key` |
 | `GATEWAY_REQUESTS_PER_MINUTE` | 每个客户端 Key 每分钟允许的请求数 | `60` |
 | `GATEWAY_UPSTREAM_TIMEOUT` | 上游供应商响应超时时间 | `60s` |
+| `DEEPSEEK_API_KEY` | DeepSeek 上游密钥 | 空 |
+| `DEEPSEEK_BASE_URL` | DeepSeek OpenAI-compatible 地址 | `https://api.deepseek.com` |
+| `DEEPSEEK_MODEL` | DeepSeek 真实模型 | `deepseek-v4-flash` |
 | `OPENAI_API_KEY` | OpenAI 上游密钥 | 空 |
-| `OPENAI_BASE_URL` | OpenAI-compatible 主供应商地址 | `https://api.openai.com/v1` |
-| `OPENAI_MODEL` | 主供应商真实模型 | `gpt-4o-mini` |
+| `OPENAI_BASE_URL` | OpenAI-compatible OpenAI 地址 | `https://api.openai.com/v1` |
+| `OPENAI_MODEL` | OpenAI 真实模型 | `gpt-4o-mini` |
 | `COMPATIBLE_BASE_URL` | OpenAI-compatible 备用供应商地址 | `http://localhost:11434/v1` |
 | `COMPATIBLE_API_KEY` | 备用供应商密钥 | `local-development-key` |
 | `COMPATIBLE_MODEL` | 备用供应商真实模型 | `qwen2.5:7b` |
 
 不要将 `.env` 或真实供应商密钥提交到 Git 仓库。
+
+DeepSeek 官方 OpenAI-compatible 接入地址是 `https://api.deepseek.com`。当前默认使用 `deepseek-v4-flash`，
+如果需要更强模型可以将 `DEEPSEEK_MODEL` 改为 `deepseek-v4-pro`。
 
 ## 路由与故障回退
 
@@ -109,6 +115,7 @@ Invoke-RestMethod `
 gateway:
   routes:
     smart-chat:
+      - deepseek
       - openai
       - compatible
 ```

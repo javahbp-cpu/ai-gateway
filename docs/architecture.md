@@ -7,7 +7,7 @@ sequenceDiagram
     participant Client as 客户端
     participant Gateway as AI 网关
     participant Router as 模型路由器
-    participant Primary as 主供应商
+    participant Primary as 优先供应商
     participant Fallback as 备用供应商
 
     Client->>Gateway: POST /v1/chat/completions
@@ -43,6 +43,7 @@ sequenceDiagram
 
 ```text
 smart-chat
+  -> DeepSeek / deepseek-v4-flash
   -> OpenAI / gpt-4o-mini
   -> Compatible / qwen2.5:7b
 ```
